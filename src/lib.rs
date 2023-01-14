@@ -1,19 +1,30 @@
-use actix_api_error_derive::ApiError;
+use actix_api_error_derive::AsApiError;
+use std::collections::HashMap;
 
-pub trait ApiError {
-    fn to_code(&self) -> u16;
+#[derive(Debug)]
+pub struct ApiError {
+    pub code: u16,
+    pub messages: HashMap<String, String>,
 }
 
+pub trait AsApiError {
+    fn as_api_error(&self) -> ApiError;
+}
 
-#[derive(ApiError)]
-#[po_path = "*.po"]
+#[derive(AsApiError)]
+//#[po_directory = ".po"]
 pub enum ErrorEn {
-    #[error(code = "404")]
+    #[error(code = 404, msg_id = "invalid_password")]
     InvalidPassword,
+    #[error(code = 404, msg_id = "invalid_id")]
+    InvalidId(u32),
 }
+
 
 #[test]
 fn default() {
     let e = ErrorEn::InvalidPassword;
-    println!("Error::to_code() = {}", e.to_code());
+    println!("Error::to_code() = {:?}", e.as_api_error());
+    let e = ErrorEn::InvalidId(42);
+    println!("Error::to_code() = {:?}", e.as_api_error());
 }
