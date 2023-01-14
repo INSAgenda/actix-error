@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "actix-api-error-derive"
+name = "resterror-derive"
 version = "0.1.0"
 dependencies = [
  "darling",

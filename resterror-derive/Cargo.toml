@@ -1,5 +1,5 @@
 [package]
-name = "actix-api-error-derive"
+name = "resterror-derive"
 version = "0.1.0"
 edition = "2021"
 
