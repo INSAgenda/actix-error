@@ -40,9 +40,9 @@ impl actix_web::ResponseError for ApiError {
 }
 
 #[derive(AsApiError)]
-//#[po_directory = ".po"]
+#[cfg_attr(feature = "po", po_directory = "locales/")]
 pub enum ErrorEn {
-    #[error(code = 404, msg_id = "invalid_password")]
+    #[error(status = "BadRequest", code = 404, msg_id = "invalid_password")]
     InvalidPassword,
     #[error(code = 404, msg_id = "invalid_id")]
     InvalidId(u32),

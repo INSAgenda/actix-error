@@ -1,6 +1,9 @@
+use std::path::PathBuf;
+
 use convert_case::{Case, Casing};
 use darling::{FromVariant};
 use proc_macro::{self, TokenStream};
+use proc_macro2::TokenTree;
 use syn::{parse_macro_input, DeriveInput};
 
 #[derive(FromVariant, Default)]
@@ -9,17 +12,50 @@ struct Opts {
     code: Option<u16>,
     msg_id: Option<String>,
     kind: Option<String>,
+    status: Option<String>,
 }
 
+fn get_dir_attr(attrs: &Vec<syn::Attribute>, attr_name: &str) -> Option<PathBuf> {
+    let mut directory_tokens = attrs.iter().find(|attr| attr.path.is_ident(attr_name)).unwrap().tokens.clone().into_iter();
+    match directory_tokens.next() {
+        Some(TokenTree::Punct(punct)) if punct.as_char() == '=' => (),
+        _ => panic!("Expected leading '=' in {attr_name} attribute"),
+    }
+    let directory = match directory_tokens.next() {
+        Some(TokenTree::Literal(value)) => value.to_string(),
+        _ => panic!("Expected literal in {attr_name} attribute")
+    };
+    let directory = directory.trim_matches('"');
+    
+    // Check if the directory exists and contains at least one .po file.
+    let directory = std::path::PathBuf::from(directory);
+    if !directory.exists() {
+        panic!("The {attr_name} does not exist");
+    }
+    if !directory.is_dir() {
+        panic!("The {attr_name} is not a directory");
+    }
+    
+    let mut files = std::fs::read_dir(&directory).unwrap();
+    if files.next().is_none() {
+        panic!("The {attr_name} does not contain any files");
+    }
 
-#[proc_macro_derive(AsApiError, attributes(po_path, error))]
+    Some(directory)
+}
+
+#[cfg_attr(feature = "po", proc_macro_derive(AsApiError, attributes(po_directory, error)))]
+#[cfg_attr(not(feature = "po"), proc_macro_derive(AsApiError, attributes(error)))]
 pub fn derive(input: TokenStream) -> TokenStream {
     // Parse the input tokens into a syntax tree
     let ast = parse_macro_input!(input as DeriveInput); 
     let ident_name = ast.ident;
 
     // Get the path to the po file
-    //let po_path = ast.attrs.iter().find(|a| a.path.is_ident("po_directory")).unwrap().tokens.to_string();
+    #[cfg(feature = "po")]
+    {
+        let po_directory = get_dir_attr(&ast.attrs, "po_directory").unwrap();
+    }
 
     // Get the variants
     let enum_data = match ast.data {
