@@ -65,7 +65,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
             }
         }
         // Get the kind of the variant
-        let kind = ident.to_string().to_case(Case::Snake);
+        let kind = opts.kind.unwrap_or_else(|| ident.to_string().to_case(Case::Snake));
 
         // Add the tuple syntax if it exists
         if list_vars.len() > 0 {

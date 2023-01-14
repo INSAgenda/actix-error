@@ -1,13 +1,20 @@
 use actix_api_error_derive::AsApiError;
+use serde::{Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ApiError {
     pub kind: &'static str,
     pub code: u16,
     pub messages: HashMap<String, String>,
 }
 
+impl ApiError {
+    /// Returns a new `ApiError` with the given kind and message.
+    pub fn to_json(&self) -> serde_json::error::Result<String>  {
+        serde_json::to_string(&self)
+    }
+}
 
 pub trait AsApiError {
     fn as_api_error(&self) -> ApiError;
@@ -40,8 +47,6 @@ pub enum ErrorEn {
     #[error(code = 404, msg_id = "invalid_id")]
     InvalidId(u32),
 }
-
-
 
 #[test]
 fn default() {
