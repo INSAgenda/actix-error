@@ -35,7 +35,6 @@ fn get_po_error_messages(path: PathBuf) -> HashMap<String, Vec<(String, String)>
         let key = &po_file.file_stem().expect("Couln't get filename.").to_str().expect("Couldn't convert filename to str").to_string();
         
         for unit in reader {
-            println!("{:?}", unit);
             let Ok(unit) = unit else {
                 eprintln!("WARNING: Invalid unit in the {} catalog", &key);
                 continue;
