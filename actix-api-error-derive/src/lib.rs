@@ -1,6 +1,5 @@
-use std::fmt::format;
-
-use darling::{FromVariant, ToTokens};
+use convert_case::{Case, Casing};
+use darling::{FromVariant};
 use proc_macro::{self, TokenStream};
 use syn::{parse_macro_input, DeriveInput};
 
@@ -9,6 +8,7 @@ use syn::{parse_macro_input, DeriveInput};
 struct Opts {
     code: Option<u16>,
     msg_id: Option<String>,
+    kind: Option<String>,
 }
 
 
@@ -19,7 +19,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
     let ident_name = ast.ident;
 
     // Get the path to the po file
-   // let po_path = ast.attrs.iter().find(|a| a.path.is_ident("po_directory")).unwrap().tokens.to_string();
+    //let po_path = ast.attrs.iter().find(|a| a.path.is_ident("po_directory")).unwrap().tokens.to_string();
 
     // Get the variants
     let enum_data = match ast.data {
@@ -39,9 +39,18 @@ pub fn derive(input: TokenStream) -> TokenStream {
         };
         let opts = Opts::from_variant(&v).unwrap();
         let code = opts.code.unwrap_or(500);
+
+        #[cfg(feature = "actix")]
+        {
+            use actix_web::http::StatusCode;
+            if let Err(e) = StatusCode::from_u16(code) {
+                panic!("Invalid status code for variant {}: {}", ident, e);
+            }
+        }
         let msg_id = opts.msg_id;
         let mut messages = String::new();
         let mut list_vars = String::new();
+        // Add the default messages for the variant in a hashmap
         for (k, v) in [("en", "Invalid password {}")] {
             list_vars = String::new();
             if let Some(tuple) = tuple {
@@ -55,6 +64,10 @@ pub fn derive(input: TokenStream) -> TokenStream {
                 );
             }
         }
+        // Get the kind of the variant
+        let kind = ident.to_string().to_case(Case::Snake);
+
+        // Add the tuple syntax if it exists
         if list_vars.len() > 0 {
             list_vars = format!("({})", list_vars);
         }
@@ -62,6 +75,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
             {ident_name}::{ident}{list_vars} => ApiError {{
                 code: {code},
                 messages: HashMap::from([{messages}]),
+                kind: \"{kind}\",
             }},
         ")
     });
@@ -82,3 +96,4 @@ pub fn derive(input: TokenStream) -> TokenStream {
 
     code.parse().unwrap()
 }
+
