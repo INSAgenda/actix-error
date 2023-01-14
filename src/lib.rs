@@ -51,8 +51,8 @@ pub enum ErrorEn {
 #[test]
 fn default() {
     let e = ErrorEn::InvalidPassword;
-    println!("Error::to_code() = {:?}", e.as_api_error());
+    println!("Error::as_api_error() = {:?}", e.as_api_error());
     let e = ErrorEn::InvalidId(42);
-    println!("Error::to_code() = {:?}", e.as_api_error());
+    println!("Error::as_api_error() = {:?}", e.as_api_error());
     
 }
