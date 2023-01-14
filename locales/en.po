@@ -13,7 +13,7 @@ msgstr ""
 "X-Generator: Poedit 3.1.1\n"
 
 msgid "invalid_password"
-msgstr "invalid_password"
+msgstr "Invalid password"
 
 msgid "invalid_id"
-msgstr "Id invalide {}"
+msgstr "Invalid id {}"
