@@ -1,4 +1,4 @@
-use actix_api_error_derive::AsApiError;
+use resterror_derive::AsApiError;
 use serde::{Serialize};
 use std::collections::HashMap;
 
