@@ -1,0 +1,9 @@
+[package]
+name = "actix-api-error"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-api-error-derive = { version = "0.1.0", path = "actix-api-error-derive" }
