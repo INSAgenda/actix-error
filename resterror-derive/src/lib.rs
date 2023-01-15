@@ -1,10 +1,11 @@
-use std::path::PathBuf;
-use std::collections::HashMap;
-use convert_case::{Case, Casing};
-use darling::{FromVariant};
-use proc_macro::{self, TokenStream};
-use proc_macro2::TokenTree;
+use darling::FromVariant;
+use std::{collections::HashMap, path::PathBuf};
+
 use syn::{parse_macro_input, DeriveInput};
+
+use proc_macro2::TokenTree;
+use proc_macro::TokenStream;
+
 
 #[derive(FromVariant, Default)]
 #[darling(default, attributes(error))]
@@ -17,6 +18,7 @@ struct Opts {
 #[cfg(feature = "po")]
 fn get_po_error_messages(path: PathBuf) -> HashMap<String, Vec<(String, String)>>{
     use poreader::{PoParser, Message}; 
+
     // Get list of .po files
     let mut po_files = Vec::new();
     for entry in std::fs::read_dir(path).expect("Path doesn't exist.") {
@@ -84,6 +86,8 @@ fn get_dir_attr(attrs: &Vec<syn::Attribute>, attr_name: &str) -> Option<PathBuf>
 #[cfg_attr(feature = "po", proc_macro_derive(AsApiError, attributes(po_directory, error)))]
 #[cfg_attr(not(feature = "po"), proc_macro_derive(AsApiError, attributes(error)))]
 pub fn derive(input: TokenStream) -> TokenStream {
+    use convert_case::{Case, Casing};
+
     // Parse the input tokens into a syntax tree
     let ast = parse_macro_input!(input as DeriveInput); 
     let ident_name = ast.ident;
@@ -102,6 +106,9 @@ pub fn derive(input: TokenStream) -> TokenStream {
     // Get variant messages
     #[cfg(feature = "po")]
     let messages_catalog = get_po_error_messages(po_directory);
+
+    #[cfg(not(feature = "po"))]
+    let messages_catalog: HashMap<String, Vec<(String, String)>> = HashMap::new();
 
     // Generate the variant's code 
     let variants = variants.iter().map(|v| {

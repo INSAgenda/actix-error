@@ -1,5 +1,5 @@
-use resterror_derive::AsApiError;
 use serde::Serialize;
+pub use resterror_derive::AsApiError;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiError {
@@ -30,7 +30,7 @@ use actix_web::http::StatusCode;
 #[cfg(feature = "actix")]
 impl actix_web::ResponseError for ApiError {
     fn status_code(&self) -> StatusCode {
-        self.code
+        StatusCode::from_u16(self.code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR)
     }
 
     fn error_response(&self) -> actix_web::HttpResponse {

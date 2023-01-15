@@ -13,7 +13,12 @@ actix = ["actix-web", "resterror-derive/actix"]
 po = ["resterror-derive/po"]
 
 [dependencies]
-resterror-derive = { version = "0.1.0", path = "resterror-derive" }
+darling = "0.14"
+proc-macro2 = { version = "1.0" }
+syn = { version = "1.0", features = ["full"] }
 actix-web = { version = "4.2", optional = true }
+convert_case = "0.6"
+poreader = { version = "1.1", optional = true}
+resterror-derive = { version = "0.1.0", path = "resterror-derive" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
