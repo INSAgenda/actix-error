@@ -167,6 +167,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
         // Add the default messages for the variant in a hashmap
         for (k, v) in messages_catalog.get(&msg_id).expect(&format!("Couldn't get the messages for the variant \"{msg_id}\"")) {
             list_vars = String::new();
+            let mut v = v.to_string();
             if let Some(tuple) = tuple {
                 list_vars = tuple.unnamed.iter().enumerate().map(|(i,_)| format!("a{i}")).collect::<Vec<String>>().join(", ");
                 messages.push_str(
@@ -175,10 +176,13 @@ pub fn derive(input: TokenStream) -> TokenStream {
             } if let Some(struc) = struc {
                 // exemple "data {data}, message {message}"
                 // result ["data", "message"]
-                let vars = v.split("{{").skip(1).map(|s| s.split("}}").next().unwrap()).collect::<Vec<&str>>();
+                let vars = v.split("{").skip(1).map(|s| s.split("}").next().unwrap().to_string()).collect::<Vec<String>>();
                 let vars = vars.as_slice();
-                let v = v.replace(vars, "");
-                list_vars = vars.join(", ");
+                // Replace all the variabels in the message
+                for var in vars {
+                    v = v.replace(&format!("{{{}}}", var.clone()), "{}").to_string();
+                }
+                list_vars = struc.named.iter().map(|f| f.ident.as_ref().unwrap().to_string()).collect::<Vec<String>>().join(", ");
                 messages.push_str(
                     &format!("(String::from(\"{k}\"), format!(\"{v}\", {list_vars})),")
                 );
