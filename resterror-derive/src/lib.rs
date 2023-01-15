@@ -113,7 +113,33 @@ pub fn derive(input: TokenStream) -> TokenStream {
             _ => panic!("ApiError can only be derived for enums with tuple variants or unit variants"),
         };
         let opts = Opts::from_variant(&v).expect("Couldn't get the options for the variant");
-        let code = opts.code.unwrap_or(500);
+        let code = if let Some(code) = opts.code {
+            code
+        } else {
+            if let Some(ref error_kind) = opts.status {
+                match error_kind.as_str() {
+                    "BadRequest" => 400,
+                    "Unauthorized" => 401,
+                    "Forbidden" => 403,
+                    "NotFound" => 404,
+                    "MethodNotAllowed" => 405,
+                    "Conflict" => 409,
+                    "Gone" => 410,
+                    "PayloadTooLarge" => 413,
+                    "UnsupportedMediaType" => 415,
+                    "UnprocessableEntity" => 422,
+                    "TooManyRequests" => 429,
+                    "InternalServerError" => 500,
+                    "NotImplemented" => 501,
+                    "BadGateway" => 502,
+                    "ServiceUnavailable" => 503,
+                    "GatewayTimeout" => 504,
+                    _ => panic!("Invalid kind for variant {}: {}", ident, error_kind),
+                }
+            } else {
+                500
+            }
+        };
 
         #[cfg(feature = "actix")]
         {

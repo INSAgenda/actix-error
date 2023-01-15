@@ -1,6 +1,5 @@
 use resterror_derive::AsApiError;
-use serde::{Serialize};
-use std::collections::HashMap;
+use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiError {
@@ -42,7 +41,7 @@ impl actix_web::ResponseError for ApiError {
 #[derive(AsApiError)]
 #[cfg_attr(feature = "po", po_directory = "locales/")]
 pub enum ErrorEn {
-    #[error(status = "BadRequest", code = 404, msg_id = "invalid_password")]
+    #[error(status = "BadRequest", msg_id = "invalid_password")]
     InvalidPassword,
     #[error(code = 404, msg_id = "invalid_id")]
     InvalidId(u32),
