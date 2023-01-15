@@ -3,15 +3,18 @@ pub use resterror_derive::AsApiError;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiError {
-    pub kind: &'static str,
+    kind: &'static str,
     pub code: u16,
-    pub messages: Vec<(String, String)>,
+    messages: Vec<(String, String)>,
 }
 
 impl ApiError {
     /// Returns a new `ApiError` with the given kind and message.
-    pub fn to_json(&self) -> serde_json::error::Result<String>  {
-        serde_json::to_string(&self)
+    pub fn to_json(&self) -> String  {
+        format!(
+            "{{\n\t\"kind\": \"{}\",\n\t\"messages\": \"{}\"\n}}",
+            self.kind, serde_json::to_string(&self.messages).unwrap()
+        )
     }
 }
 
