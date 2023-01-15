@@ -26,17 +26,9 @@ impl Translation {
 }
 
 #[macro_export]
-macro_rules! collection {
-    // map-like
-    ($($k:expr => $v:expr),* $(,)?) => {{
-        core::convert::From::from([$(($k.to_string(), $v.to_string()),)*])
-    }};
-}
-
-#[macro_export]
 macro_rules! trad {
     ($($k:expr => $v:expr),* $(,)?) => {{
-        Translation::from_hashmap(collection![$($k => $v),*])
+        Translation::from_hashmap(core::convert::From::from([$(($k.to_string(), $v.to_string()),)*]))
     }};
 }
 
