@@ -1,6 +1,8 @@
 use serde::Serialize;
 pub use resterror_derive::AsApiError;
 
+pub mod translate;
+
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiError {
     pub kind: &'static str,
@@ -30,6 +32,8 @@ impl std::fmt::Display for ApiError {
 
 #[cfg(feature = "actix")]
 use actix_web::http::StatusCode;
+use translate::Translation;
+
 #[cfg(feature = "actix")]
 impl actix_web::ResponseError for ApiError {
     fn status_code(&self) -> StatusCode {
@@ -50,9 +54,9 @@ pub enum ErrorEn {
     InvalidId(u32),
     #[error(code = 500, msg_id = "named_error")]
     NamedError { name: String, age: u32 },
+    #[error(code = 500)]
+    NamedError2(Translation)
 }
-
-
 
 #[test]
 fn default() {
@@ -62,4 +66,10 @@ fn default() {
     println!("Error::as_api_error() = {:?}", e.as_api_error());
     let e = ErrorEn::NamedError { name: "John".to_string(), age: 42 };
     println!("Error::as_api_error() = {:?}", e.as_api_error());
+    let e = ErrorEn::NamedError2(trad!{
+        "en" => "Hello",
+        "fr" => "Bonjour",
+    });
+    println!("Error::as_api_error() = {:?}", e.as_api_error());
 }
+

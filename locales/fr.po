@@ -20,3 +20,6 @@ msgstr "Invalid id {}"
 
 msgid "named_error"
 msgstr "Internal error {name} {age}"
+
+msgid "named_error_2"
+msgstr "Internal error {}"

@@ -15,6 +15,7 @@ struct Opts {
     kind: Option<String>,
     status: Option<String>,
 }
+
 #[cfg(feature = "po")]
 fn get_po_error_messages(path: PathBuf) -> HashMap<String, Vec<(String, String)>>{
     use poreader::{PoParser, Message}; 
@@ -169,13 +170,22 @@ pub fn derive(input: TokenStream) -> TokenStream {
             list_vars = String::new();
             let mut v = v.to_string();
             if let Some(tuple) = tuple {
-                list_vars = tuple.unnamed.iter().enumerate().map(|(i,_)| format!("a{i}")).collect::<Vec<String>>().join(", ");
+                // Get the variables names and their calls
+                let tup: (Vec<String>, Vec<String>)= tuple.unnamed.iter().enumerate().map(|(i, field)| {
+                    if field.ty == syn::parse_str("Translation").unwrap() {
+                        (format!("a{i}"), format!("a{i}.get(\"{k}\")"))
+                    } else {
+                        (format!("a{i}"), format!("a{i}"))
+                    }
+                }).unzip();
+                // Get the variables names
+                list_vars = tup.0.join(", ");
+                // Get the variables calls
+                let list_calls = tup.1.join(", ");
                 messages.push_str(
-                    &format!("(String::from(\"{k}\"), format!(\"{v}\", {list_vars})),")
+                    &format!("(String::from(\"{k}\"), format!(\"{v}\", {list_calls})),")
                 );
-            } if let Some(struc) = struc {
-                // exemple "data {data}, message {message}"
-                // result ["data", "message"]
+            } else if let Some(struc) = struc {
                 let vars = v.split("{").skip(1).map(|s| s.split("}").next().unwrap().to_string()).collect::<Vec<String>>();
                 let vars = vars.as_slice();
                 // Replace all the variabels in the message
@@ -187,7 +197,6 @@ pub fn derive(input: TokenStream) -> TokenStream {
                     &format!("(String::from(\"{k}\"), format!(\"{v}\", {list_vars})),")
                 );
             } else {
-
                 messages.push_str(
                     &format!("(String::from(\"{k}\"), String::from(\"{v}\")),")
                 );
@@ -204,11 +213,12 @@ pub fn derive(input: TokenStream) -> TokenStream {
             }
         }
         format!("
-            {ident_name}::{ident} {list_vars} => 
+            {ident_name}::{ident} {list_vars} => {{
                 ApiError {{
                     code: {code},
                     messages: vec![{messages}],
                     kind: \"{kind}\",
+                }}
             }},
         ")
     });
