@@ -3,9 +3,9 @@ pub use resterror_derive::AsApiError;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiError {
-    kind: &'static str,
+    pub kind: &'static str,
     pub code: u16,
-    messages: Vec<(String, String)>,
+    pub messages: Vec<(String, String)>,
 }
 
 impl ApiError {
@@ -48,7 +48,11 @@ pub enum ErrorEn {
     InvalidPassword,
     #[error(code = 404, msg_id = "invalid_id")]
     InvalidId(u32),
+    #[error(code = 500, msg_id = "named_error")]
+    NamedError { name: String, age: u32 },
 }
+
+
 
 #[test]
 fn default() {
@@ -56,5 +60,6 @@ fn default() {
     println!("Error::as_api_error() = {:?}", e.as_api_error());
     let e = ErrorEn::InvalidId(42);
     println!("Error::as_api_error() = {:?}", e.as_api_error());
-    
+    let e = ErrorEn::NamedError { name: "John".to_string(), age: 42 };
+    println!("Error::as_api_error() = {:?}", e.as_api_error());
 }

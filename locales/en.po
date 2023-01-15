@@ -17,3 +17,6 @@ msgstr "Invalid password"
 
 msgid "invalid_id"
 msgstr "Invalid id {}"
+
+msgid "named_error"
+msgstr "Internal error {name} {age}"

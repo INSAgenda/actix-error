@@ -116,9 +116,14 @@ pub fn derive(input: TokenStream) -> TokenStream {
         // Get the tuple if it exists
         let tuple = match &v.fields {
             syn::Fields::Unnamed(u) => Some(u),
-            syn ::Fields::Unit => None,
-            _ => panic!("ApiError can only be derived for enums with tuple variants or unit variants"),
+            _ => None,
         };
+        let struc = if let syn::Fields::Named(n) = &v.fields {
+            Some(n)
+        } else {
+            None
+        };
+            
         let opts = Opts::from_variant(&v).expect("Couldn't get the options for the variant");
         let code = if let Some(code) = opts.code {
             code
@@ -167,7 +172,18 @@ pub fn derive(input: TokenStream) -> TokenStream {
                 messages.push_str(
                     &format!("(String::from(\"{k}\"), format!(\"{v}\", {list_vars})),")
                 );
+            } if let Some(struc) = struc {
+                // exemple "data {data}, message {message}"
+                // result ["data", "message"]
+                let vars = v.split("{{").skip(1).map(|s| s.split("}}").next().unwrap()).collect::<Vec<&str>>();
+                let vars = vars.as_slice();
+                let v = v.replace(vars, "");
+                list_vars = vars.join(", ");
+                messages.push_str(
+                    &format!("(String::from(\"{k}\"), format!(\"{v}\", {list_vars})),")
+                );
             } else {
+
                 messages.push_str(
                     &format!("(String::from(\"{k}\"), String::from(\"{v}\")),")
                 );
@@ -177,10 +193,14 @@ pub fn derive(input: TokenStream) -> TokenStream {
         let kind = opts.kind.unwrap_or_else(|| ident.to_string().to_case(Case::Snake));
         // Add the tuple syntax if it exists
         if list_vars.len() > 0 {
-            list_vars = format!("({})", list_vars);
+            if struc.is_some() {
+                list_vars = format!("{{ {} }}", list_vars);
+            } else {
+                list_vars = format!("( {} )", list_vars);
+            }
         }
         format!("
-            {ident_name}::{ident}{list_vars} => 
+            {ident_name}::{ident} {list_vars} => 
                 ApiError {{
                     code: {code},
                     messages: vec![{messages}],
@@ -201,8 +221,9 @@ pub fn derive(input: TokenStream) -> TokenStream {
     code.push_str("   }\n");
     code.push_str("}\n");
 
-    println!("{code}");
+    println!("code : {code}");
 
     code.parse().expect("Couldn't parse the code")
 }
+
 
