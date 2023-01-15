@@ -6,7 +6,7 @@ use std::collections::HashMap;
 pub struct ApiError {
     pub kind: &'static str,
     pub code: u16,
-    pub messages: HashMap<String, String>,
+    pub messages: Vec<(String, String)>,
 }
 
 impl ApiError {

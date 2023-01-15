@@ -14,6 +14,3 @@ msgstr ""
 
 msgid "invalid_password"
 msgstr "invalid_password"
-
-msgid "invalid_id"
-msgstr "Id invalide {}"

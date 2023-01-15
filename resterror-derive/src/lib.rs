@@ -142,16 +142,16 @@ pub fn derive(input: TokenStream) -> TokenStream {
         }
         // Get the kind of the variant
         let kind = opts.kind.unwrap_or_else(|| ident.to_string().to_case(Case::Snake));
-
         // Add the tuple syntax if it exists
         if list_vars.len() > 0 {
             list_vars = format!("({})", list_vars);
         }
         format!("
-            {ident_name}::{ident}{list_vars} => ApiError {{
-                code: {code},
-                messages: HashMap::from([{messages}]),
-                kind: \"{kind}\",
+            {ident_name}::{ident}{list_vars} => 
+                ApiError {{
+                    code: {code},
+                    messages: vec![{messages}],
+                    kind: \"{kind}\",
             }},
         ")
     });
