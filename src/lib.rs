@@ -37,7 +37,7 @@ impl actix_web::ResponseError for ApiError {
     }
 
     fn error_response(&self) -> actix_web::HttpResponse {
-        actix_web::HttpResponse::build(self.status_code()).json(self.messages.clone())
+        actix_web::HttpResponse::build(self.status_code()).json(self.to_json())
     }
 }
 
