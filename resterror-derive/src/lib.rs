@@ -165,6 +165,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
         let msg_id = opts.msg_id.unwrap_or_else(|| ident.to_string().to_case(Case::Snake));
         let mut messages = String::new();
         let mut list_vars = String::new();
+        
         // Add the default messages for the variant in a hashmap
         for (k, v) in messages_catalog.get(&msg_id).expect(&format!("Couldn't get the messages for the variant \"{msg_id}\"")) {
             list_vars = String::new();
