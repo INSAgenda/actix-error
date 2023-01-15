@@ -183,6 +183,11 @@ pub fn derive(input: TokenStream) -> TokenStream {
                 list_vars = tup.0.join(", ");
                 // Get the variables calls
                 let list_calls = tup.1.join(", ");
+                // Count the number of "{}" in the message and compare it to the number of variables in the tuple
+                let nb = v.matches("{}").count();
+                if nb != tuple.unnamed.len() {
+                    panic!("The number of variables in the message for the variant \"{msg_id}\" must be equal to the number of variables in the tuple");
+                }
                 messages.push_str(
                     &format!("(String::from(\"{k}\"), format!(\"{v}\", {list_calls})),")
                 );
