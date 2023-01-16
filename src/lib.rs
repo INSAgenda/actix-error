@@ -56,7 +56,7 @@ impl actix_web::ResponseError for ApiError {
         actix_web::HttpResponse::build(self.status_code()).json(self)
     }
 }
-
+#[cfg(feature = "po")]
 #[derive(AsApiError)]
 #[cfg_attr(feature = "po", po_directory = "locales/")]
 pub enum ErrorEn {
