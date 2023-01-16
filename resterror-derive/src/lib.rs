@@ -70,15 +70,15 @@ fn get_dir_attr(attrs: &Vec<syn::Attribute>, attr_name: &str) -> Option<PathBuf>
     // Check if the directory exists and contains at least one .po file.
     let directory = std::path::PathBuf::from(directory);
     if !directory.exists() {
-        panic!("The {attr_name} does not exist");
+        panic!("The {attr_name} directory does not exist");
     }
     if !directory.is_dir() {
-        panic!("The {attr_name} is not a directory");
+        panic!("The path {attr_name} is not a directory");
     }
     
     let mut files = std::fs::read_dir(&directory).expect("Couldn't read the directory");
     if files.next().is_none() {
-        panic!("The {attr_name} does not contain any files");
+        panic!("The path {attr_name} does not contain any files");
     }
 
     Some(directory)

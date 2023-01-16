@@ -41,10 +41,11 @@ impl std::fmt::Display for ApiError {
         write!(f, "{} : {:?}", self.kind, self.messages)
     }
 }
+#[cfg(feature = "po")]
+use translate::Translation;
 
 #[cfg(feature = "actix")]
 use actix_web::http::StatusCode;
-use translate::Translation;
 
 #[cfg(feature = "actix")]
 impl actix_web::ResponseError for ApiError {
