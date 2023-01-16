@@ -10,6 +10,7 @@ proc-macro = true
 [features]
 actix = ["actix-web"]
 po = ["poreader"]
+verbose = []
 
 [dependencies]
 darling = "0.14"

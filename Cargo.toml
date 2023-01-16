@@ -11,6 +11,7 @@ readme = "README.md"
 [features]
 actix = ["actix-web", "resterror-derive/actix"]
 po = ["resterror-derive/po"]
+verbose = ["resterror-derive/verbose"]
 
 [dependencies]
 darling = "0.14"

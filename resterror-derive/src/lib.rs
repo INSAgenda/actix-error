@@ -241,6 +241,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
     code.push_str("   }\n");
     code.push_str("}\n");
 
+    #[cfg(feature = "verbose")]
     println!("code : {code}");
 
     code.parse().expect("Couldn't parse the code")
