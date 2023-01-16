@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use serde::Serialize;
 pub use resterror_derive::AsApiError;
+use serde::Serialize;
 
 pub mod translate;
 
@@ -67,22 +67,36 @@ pub enum ErrorEn {
     #[error(code = 500, msg_id = "named_error")]
     NamedError { name: String, age: u32 },
     #[error(code = 500)]
-    NamedError2(Translation)
+    NamedError2(Translation),
 }
 
 #[test]
 #[cfg(all(feature = "po", feature = "actix"))]
 fn default() {
     let e = ErrorEn::InvalidPassword;
-    println!("Error::as_api_error() = {:?}", serde_json::to_string(&e.as_api_error()).unwrap());
+    println!(
+        "Error::as_api_error() = {:?}",
+        serde_json::to_string(&e.as_api_error()).unwrap()
+    );
     let e = ErrorEn::InvalidId(42);
-    println!("Error::as_api_error() = {:?}", serde_json::to_string(&e.as_api_error()).unwrap());
-    let e = ErrorEn::NamedError { name: "John".to_string(), age: 42 };
-    println!("Error::as_api_error() = {:?}", serde_json::to_string(&e.as_api_error()).unwrap());
-    let e = ErrorEn::NamedError2(trad!{
+    println!(
+        "Error::as_api_error() = {:?}",
+        serde_json::to_string(&e.as_api_error()).unwrap()
+    );
+    let e = ErrorEn::NamedError {
+        name: "John".to_string(),
+        age: 42,
+    };
+    println!(
+        "Error::as_api_error() = {:?}",
+        serde_json::to_string(&e.as_api_error()).unwrap()
+    );
+    let e = ErrorEn::NamedError2(trad! {
         "en" => "Hello",
         "fr" => "Bonjour",
     });
-    println!("Error::as_api_error() = {:?}", serde_json::to_string(&e.as_api_error()).unwrap());
+    println!(
+        "Error::as_api_error() = {:?}",
+        serde_json::to_string(&e.as_api_error()).unwrap()
+    );
 }
-

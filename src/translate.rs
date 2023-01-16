@@ -17,11 +17,18 @@ impl Translation {
     }
 
     fn get_first(&self) -> &str {
-        self.messages.values().next().map(|s| s.as_str()).unwrap_or("")
+        self.messages
+            .values()
+            .next()
+            .map(|s| s.as_str())
+            .unwrap_or("")
     }
 
     pub fn get(&self, key: &str) -> &str {
-        self.messages.get(key).map(|s| s.as_str()).unwrap_or(self.get_first())
+        self.messages
+            .get(key)
+            .map(|s| s.as_str())
+            .unwrap_or(self.get_first())
     }
 }
 
