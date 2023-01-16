@@ -10,7 +10,7 @@ pub struct ApiError {
     pub kind: String,
     #[serde(skip_serializing)]
     pub code: u16,
-    #[serde(skip_serializing, skip_deserializing)]
+    #[serde(skip_serializing)]
     pub messages: HashMap<String, String>,
     message_fr: String,
     message_en: String,
