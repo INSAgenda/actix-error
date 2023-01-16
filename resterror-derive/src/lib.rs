@@ -220,11 +220,11 @@ pub fn derive(input: TokenStream) -> TokenStream {
         }
         format!("
             {ident_name}::{ident} {list_vars} => {{
-                ApiError {{
-                    code: {code},
-                    messages: HashMap::from([{messages}]),
-                    kind: \"{kind}\",
-                }}
+                ApiError::new(
+                    {code}, 
+                    \"{kind}\",
+                    HashMap::from([{messages}]), 
+                )
             }},
         ")
     });
