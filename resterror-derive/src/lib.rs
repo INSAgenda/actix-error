@@ -222,7 +222,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
             {ident_name}::{ident} {list_vars} => {{
                 ApiError {{
                     code: {code},
-                    messages: vec![{messages}],
+                    messages: HashMap::from([{messages}]),
                     kind: \"{kind}\",
                 }}
             }},

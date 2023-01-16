@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::Serialize;
 pub use resterror_derive::AsApiError;
 
@@ -6,18 +8,9 @@ pub mod translate;
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiError {
     pub kind: &'static str,
+    #[serde(skip_serializing, skip_deserializing)]
     pub code: u16,
-    pub messages: Vec<(String, String)>,
-}
-
-impl ApiError {
-    /// Returns a new `ApiError` with the given kind and message.
-    pub fn to_json(&self) -> String  {
-        format!(
-            "{{\n\t\"kind\": \"{}\",\n\t\"messages\": {}\n}}",
-            self.kind, serde_json::to_string(&self.messages).unwrap()
-        )
-    }
+    pub messages: HashMap<String, String>,
 }
 
 pub trait AsApiError {
@@ -41,7 +34,7 @@ impl actix_web::ResponseError for ApiError {
     }
 
     fn error_response(&self) -> actix_web::HttpResponse {
-        actix_web::HttpResponse::build(self.status_code()).json(self.to_json())
+        actix_web::HttpResponse::build(self.status_code()).json(self)
     }
 }
 
