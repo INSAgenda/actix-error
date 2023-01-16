@@ -14,7 +14,7 @@ impl ApiError {
     /// Returns a new `ApiError` with the given kind and message.
     pub fn to_json(&self) -> String  {
         format!(
-            "{{\n\t\"kind\": \"{}\",\n\t\"messages\": \"{}\"\n}}",
+            "{{\n\t\"kind\": \"{}\",\n\t\"messages\": {}\n}}",
             self.kind, serde_json::to_string(&self.messages).unwrap()
         )
     }
