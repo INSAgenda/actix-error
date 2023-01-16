@@ -71,6 +71,7 @@ pub enum ErrorEn {
 }
 
 #[test]
+#[cfg(all(feature = "po", feature = "actix"))]
 fn default() {
     let e = ErrorEn::InvalidPassword;
     println!("Error::as_api_error() = {:?}", serde_json::to_string(&e.as_api_error()).unwrap());
