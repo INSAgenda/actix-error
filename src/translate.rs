@@ -32,8 +32,16 @@ impl Translation {
     }
 }
 
+#[deprecated]
 #[macro_export]
 macro_rules! trad {
+    ($($k:expr => $v:expr),* $(,)?) => {{
+        Translation::from_hashmap(core::convert::From::from([$(($k.to_string(), $v.to_string()),)*]))
+    }};
+}
+
+#[macro_export]
+macro_rules! tr {
     ($($k:expr => $v:expr),* $(,)?) => {{
         Translation::from_hashmap(core::convert::From::from([$(($k.to_string(), $v.to_string()),)*]))
     }};

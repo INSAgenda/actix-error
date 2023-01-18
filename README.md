@@ -92,7 +92,7 @@ For example, you can use the error in an actix route like this:
 
     #[get("/custom-error")]
     async fn custom_error() -> Result<HttpResponse, Error> {
-        Err(Error::CustomError(trad! {
+        Err(Error::CustomError(tr! {
             "fr" => "Erreur personnalisée",
             "en" => "Custom error"
         }))

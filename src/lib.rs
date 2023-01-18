@@ -93,7 +93,7 @@ fn default() {
         "Error::as_api_error() = {:?}",
         serde_json::to_string(&e.as_api_error()).unwrap()
     );
-    let e = ErrorEn::NamedError2(trad! {
+    let e = ErrorEn::NamedError2(tr! {
         "en" => "Hello",
         "fr" => "Bonjour",
     });
