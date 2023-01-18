@@ -1,12 +1,11 @@
 # Resterror
-This is a simple library to handle errors in a RESTful way.  
-It uses a lightweight syntax to define errors and their codes.  
-
+This is a simple library to handle errors in a RESTful way. It uses a lightweight syntax to define errors and their codes.
+  
 ## Support 
-This crate uses the 'PO' translation method, you can also defined the error messages in a json file.  
-This means if you are using the po method the error messages are defined in a PO file for each language.
+This crate uses the 'PO' translation method and also allows you to define error messages in a JSON file. This means that if you use the PO method, the error messages are defined in a PO file for each language.
   
 Because this crate is used in the INSAgenda project, the JSON format of the response is defined with the following fields:
+
 ```json
 {
   "kind": "invalid_request",
@@ -26,7 +25,7 @@ In the future, this crate will be more generic and will be in the following form
 }
 ```
 ## Usage
-You can for example define an error for actix
+You can for example define an error for actix: 
 ### Define errors
 ```rust
     #[derive(resterror::AsApiError, Debug, Clone)]
@@ -79,7 +78,7 @@ You can for example define an error for actix
     }
 
 ```
-You need to define the PO directory where the PO files are located. 
+You need to define the PO directory where the PO files are located.  
 The name of each file must be the language code.
 
 ### Use errors
@@ -122,3 +121,5 @@ en.po :
 msgid "invalid_request"
 msgstr "Invalid request"
 ```
+
+That's it, you can now use this library to handle errors in a RESTful way in your project. Keep in mind that this is just a basic example, you can customize and expand it to fit your needs.
