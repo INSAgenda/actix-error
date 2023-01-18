@@ -1,5 +1,5 @@
 use darling::FromVariant;
-use std::{collections::HashMap, path::PathBuf};
+use std::path::PathBuf;
 
 use syn::{parse_macro_input, DeriveInput};
 
