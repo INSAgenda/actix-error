@@ -34,6 +34,9 @@ You can for example define an error for actix
         /// Auth required
         #[error(code = 511)]
         AuthentificationRequired,
+        /// Custom error
+        #[error(code = 500)]
+        CustomError(Translation),
     }
 
     impl From<BlockingError> for Error {
@@ -67,13 +70,22 @@ For example, you can use the error in an actix route like this:
     async fn index() -> Result<HttpResponse, Error> {
         Err(Error::InvalidRequest)
     }
+
+    #[get("/custom-error")]
+    async fn custom_error() -> Result<HttpResponse, Error> {
+        Err(Error::CustomError(trad! {
+            "fr" => "Erreur personnalisée",
+            "en" => "Custom error"
+        }))
+    }
 ```
 This error will be translated to the following JSON:
 ```json
 {
   "kind": "invalid_request",
   "messages_fr": "Requête invalide",
-  "messages_en": "Invalid request"
+  "messages_en": "Invalid request",
+  "origin": ""
 }
 ```
 With the following PO file:
