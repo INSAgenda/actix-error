@@ -81,13 +81,13 @@ With the following PO file:
 fr.po :
 ```po
 
-msgid "Invalid_request"
+msgid "invalid_request"
 msgstr "Requête invalide"
 ```
 
 en.po :
 ```po
 
-msgid "Invalid_request"
+msgid "invalid_request"
 msgstr "Invalid request"
 ```
