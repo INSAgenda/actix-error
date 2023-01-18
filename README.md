@@ -5,7 +5,26 @@ It uses a lightweight syntax to define errors and their codes.
 ## Support 
 This crate uses the 'PO' translation method.  
 This means that the error messages are defined in a PO file for each language.
-
+  
+Because this crate is used in the INSAgenda project, the JSON format is defined with the following fields:
+```json
+{
+  "kind": "invalid_request",
+  "messages_fr": "Requête invalide",
+  "messages_en": "Invalid request",
+  "origin": ""
+}
+```
+In the future, this crate will be more generic and will be in the following format:
+```json
+{
+  "kind": "invalid_request",
+  "messages": {
+    "fr": "Requête invalide",
+    "en": "Invalid request"
+  }
+}
+```
 ## Usage
 You can for example define an error for actix
 ### Define errors
