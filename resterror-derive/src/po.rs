@@ -1,6 +1,6 @@
 use std::{path::PathBuf, collections::HashMap};
 
-pub fn get_po_error_messages(path: PathBuf) -> HashMap<String, HashMap<String, String>> {
+pub(crate) fn get_po_error_messages(path: PathBuf) -> HashMap<String, HashMap<String, String>> {
     use poreader::{PoParser, Message}; 
 
     // Get list of .po files

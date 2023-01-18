@@ -2,7 +2,7 @@ use std::{collections::HashMap, path::PathBuf};
 use serde_json;
 
 
-pub fn get_json_error_messages(path: PathBuf) -> HashMap<String, HashMap<String, String>> {
+pub(crate) fn get_json_error_messages(path: PathBuf) -> HashMap<String, HashMap<String, String>> {
     // Get the json file   
     let file = std::fs::File::open(&path).expect("Couldn't open JSON file.");
     

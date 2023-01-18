@@ -17,7 +17,7 @@ use crate::po::get_po_error_messages;
 #[cfg(feature = "po")]
 mod po;
 
-
+/// 
 #[derive(FromVariant, Default)]
 #[darling(default, attributes(error))]
 struct Opts {
@@ -58,6 +58,36 @@ fn get_dir_attr(attrs: &Vec<syn::Attribute>, attr_name: &str) -> Option<PathBuf>
     Some(directory)
 }
 
+/// This derive macro is used to convert an enum into an ApiError.  
+/// You can use it by adding the ```#[derive(AsApiError)]``` attribute to your enum.  
+/// You have to specify the error messages in a json file or in a po directory.  
+/// The path to the json file or the po directory is specified by adding the ```#[json_file = "path/to/messages.json"]``` or ```#[po_directory = "path/to/po"]``` attribute to the enum.  
+/// By default, the message id is the name of the variant in ```snake case```.  
+/// You can change the message id by adding the ```#[error(msg_id = "your_message_id")]``` attribute to the variant.  
+/// You can also add a custom code to the error by adding the ```#[error(code = 400)]``` attribute to the variant.  
+/// You can also add a status to the error by adding the ```#[error(status = "your_status")]``` attribute to the variant.  
+/// The following status are available and return the corresponding status code: 
+/// ``` rust
+/// match error_kind {
+///     "BadRequest" => 400,
+///     "Unauthorized" => 401,
+///     "Forbidden" => 403,
+///     "NotFound" => 404,
+///     "MethodNotAllowed" => 405,
+///     "Conflict" => 409,
+///     "Gone" => 410,
+///     "PayloadTooLarge" => 413,
+///     "UnsupportedMediaType" => 415,
+///     "UnprocessableEntity" => 422,
+///     "TooManyRequests" => 429,
+///     "InternalServerError" => 500,
+///     "NotImplemented" => 501,
+///     "BadGateway" => 502,
+///     "ServiceUnavailable" => 503,
+///     "GatewayTimeout" => 504,
+///     _ => unreachable!(),
+/// }
+/// ```
 #[cfg_attr(all(feature = "json", feature="po"), proc_macro_derive(AsApiError, attributes(error, msg_path)))]
 #[cfg_attr(all(feature = "json", not(feature = "po")), proc_macro_derive(AsApiError, attributes(json_file, error)))]
 #[cfg_attr(all(feature = "po", not(feature = "json")), proc_macro_derive(AsApiError, attributes(po_directory, error)))]
