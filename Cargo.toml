@@ -6,6 +6,7 @@ description = "A simple library to handle REST errors, with a derive macro to ge
 version = "0.1.1"
 edition = "2021"
 readme = "README.md"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
