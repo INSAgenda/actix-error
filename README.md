@@ -32,7 +32,7 @@ You can for example define an error for actix
         #[error(status = "InternalServerError")]
         BlockingError,
         /// Auth required
-        #[error(status = "BadRequest")]
+        #[error(code = 511)]
         AuthentificationRequired,
     }
 
