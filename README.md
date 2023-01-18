@@ -10,3 +10,6 @@ This means that the error messages are defined in a PO file for each language.
 
 ### Define errors
 ```rust
+
+    
+```
