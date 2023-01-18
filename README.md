@@ -71,7 +71,7 @@ For example, you can use the error in an actix route like this:
 This error will be translated to the following JSON:
 ```json
 {
-  "kind": 400,
+  "kind": "invalid_request",
   "messages_fr": "Requête invalide",
   "messages_en": "Invalid request"
 }
