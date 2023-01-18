@@ -46,5 +46,5 @@ macro_rules! tr {
         Translation::from_hashmap(core::convert::From::from([$(($k.to_string(), $v.to_string()),)*]))
     }};
 }
-
+pub use tr;
 pub use trad;
