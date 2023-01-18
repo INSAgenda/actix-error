@@ -57,3 +57,37 @@ You can for example define an error for actix
     }
 
 ```
+You need to define the PO directory where the PO files are located. 
+The name of each file must be the language code.
+
+### Use errors
+For example, you can use the error in an actix route like this:
+```rust
+    #[get("/")]
+    async fn index() -> Result<HttpResponse, Error> {
+        Err(Error::InvalidRequest)
+    }
+```
+This error will be translated to the following JSON:
+```json
+{
+  "kind": 400,
+  "messages_fr": "Requête invalide",
+  "messages_en": "Invalid request"
+}
+```
+With the following PO file:
+
+fr.po :
+```po
+
+msgid "Invalid_request"
+msgstr "Requête invalide"
+```
+
+en.po :
+```po
+
+msgid "Invalid_request"
+msgstr "Invalid request"
+```
