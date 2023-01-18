@@ -1,0 +1,18 @@
+{
+    "invalid_password" : {
+        "fr" : "Mot de passe invalide",
+        "en" : "Invalid password"
+    },
+    "invalid_id" : {
+        "fr" : "Id invalide {}",
+        "en" : "Invalid id {}"
+    },
+    "named_error" : {
+        "fr" : "Erreur nommée {name} {age}",
+        "en" : "Named error {name} {age}"
+    },
+    "named_error_2" : {
+        "fr" : "Erreur nommée {}",
+        "en" : "Internal error {}"
+    }
+}

@@ -14,6 +14,9 @@ categories = ["actix", "rest", "api", "web-programming", "error"]
 actix = ["actix-web", "resterror-derive/actix"]
 po = ["resterror-derive/po"]
 verbose = ["resterror-derive/verbose"]
+json = ["resterror-derive/json"]
+
+all = ["actix", "po", "verbose", "json"]
 
 [dependencies]
 proc-macro2 = { version = "1.0" }

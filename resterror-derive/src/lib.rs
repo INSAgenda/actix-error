@@ -7,6 +7,17 @@ use proc_macro2::TokenTree;
 use proc_macro::TokenStream;
 
 
+#[cfg(feature = "json")]
+mod json;
+#[cfg(feature = "json")]
+use crate::json::get_json_error_messages;
+
+#[cfg(feature = "po")]
+use crate::po::get_po_error_messages;
+#[cfg(feature = "po")]
+mod po;
+
+
 #[derive(FromVariant, Default)]
 #[darling(default, attributes(error))]
 struct Opts {
@@ -16,45 +27,8 @@ struct Opts {
     status: Option<String>,
 }
 
-#[cfg(feature = "po")]
-fn get_po_error_messages(path: PathBuf) -> HashMap<String, Vec<(String, String)>>{
-    use poreader::{PoParser, Message}; 
 
-    // Get list of .po files
-    let mut po_files = Vec::new();
-    for entry in std::fs::read_dir(path).expect("Path doesn't exist.") {
-        let entry = entry.expect("Couldn't read entry.");
-        let path = entry.path();
-        if path.extension().expect("Couldn't get the file extension") == "po" {
-            po_files.push(path);
-        }
-    }
-    // Get the messages from the .po files
-    let mut messages: HashMap<String, Vec<(String, String)>> = HashMap::new();
-    for po_file in po_files {
-        let parser = PoParser::new();
-        let file = std::fs::File::open(&po_file).expect("Couldn't open PO file.");
-        let reader = parser.parse(file).expect("Couldn't parse PO file.");
-        let key = &po_file.file_stem().expect("Couln't get filename.").to_str().expect("Couldn't convert filename to str").to_string();
-        
-        for unit in reader {
-            let Ok(unit) = unit else {
-                eprintln!("WARNING: Invalid unit in the {} catalog", &key);
-                continue;
-            };
-            if let Message::Simple { id, text: Some(text) } = unit.message() {
-                if let Some(msgs) = messages.get_mut(id) {
-                    msgs.push((key.to_owned(), text.to_owned()));
-                } else {
-                    messages.insert(id.to_owned(), vec![(key.to_owned(), text.to_owned())]);
-                }
-            }
-        }
-    }
-    messages
-}
-
-#[cfg(feature = "po")]
+#[cfg(any(feature = "po", feature = "json"))]
 fn get_dir_attr(attrs: &Vec<syn::Attribute>, attr_name: &str) -> Option<PathBuf> {
     let mut directory_tokens = attrs.iter().find(|attr| attr.path.is_ident(attr_name)).expect("Couldn't get the attribute").tokens.clone().into_iter();
     match directory_tokens.next() {
@@ -84,8 +58,10 @@ fn get_dir_attr(attrs: &Vec<syn::Attribute>, attr_name: &str) -> Option<PathBuf>
     Some(directory)
 }
 
-#[cfg_attr(feature = "po", proc_macro_derive(AsApiError, attributes(po_directory, error)))]
-#[cfg_attr(not(feature = "po"), proc_macro_derive(AsApiError, attributes(error)))]
+#[cfg_attr(all(feature = "json", feature="po"), proc_macro_derive(AsApiError, attributes(error, msg_path)))]
+#[cfg_attr(all(feature = "json", not(feature = "po")), proc_macro_derive(AsApiError, attributes(json_file, error)))]
+#[cfg_attr(all(feature = "po", not(feature = "json")), proc_macro_derive(AsApiError, attributes(po_directory, error)))]
+#[cfg_attr(not(any(feature = "po", feature = "json")), proc_macro_derive(AsApiError, attributes(error)))]
 pub fn derive(input: TokenStream) -> TokenStream {
     use convert_case::{Case, Casing};
 
@@ -94,22 +70,40 @@ pub fn derive(input: TokenStream) -> TokenStream {
     let ident_name = ast.ident;
 
     // Get the path to the po file
-    #[cfg(feature = "po")]
+    #[cfg(all(feature = "po", not(feature = "json")))]
     let po_directory = get_dir_attr(&ast.attrs, "po_directory").expect("No po_directory attribute found");
     
+    // Get the path to the json file
+    #[cfg(all(feature = "json", not(feature = "po")))]
+    let json_file = get_dir_attr(&ast.attrs, "json_file").expect("No json_file attribute found");
+
+    #[cfg(all(feature = "json", feature = "po"))]
+    let messages_catalog = {
+        let path = get_dir_attr(&ast.attrs, "msg_path").expect("No path attribute found");
+        // Check if the path is a directory
+        if path.is_dir() {
+            get_po_error_messages(path)
+        } else {
+            get_json_error_messages(path)
+        }
+    };
+    
+    #[cfg(all(feature = "json", not(feature = "po")))]
+    let messages_catalog = get_json_error_messages(json_file);
+
+    #[cfg(all(feature = "po", not(feature = "json")))]
+    let messages_catalog = get_po_error_messages(po_directory);
+
+
+    #[cfg(not(any(feature = "json", feature = "po")))]
+    let messages_catalog: HashMap<String, HashMap<String, String>> = HashMap::new();
+
     // Get the variants
     let enum_data = match ast.data {
         syn::Data::Enum(data) => data,
         _ => panic!("ApiError can only be derived for enums"),
     };
     let variants = enum_data.variants;
-    
-    // Get variant messages
-    #[cfg(feature = "po")]
-    let messages_catalog = get_po_error_messages(po_directory);
-
-    #[cfg(not(feature = "po"))]
-    let messages_catalog: HashMap<String, Vec<(String, String)>> = HashMap::new();
 
     // Generate the variant's code 
     let variants = variants.iter().map(|v| {

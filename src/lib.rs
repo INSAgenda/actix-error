@@ -59,7 +59,8 @@ impl actix_web::ResponseError for ApiError {
 }
 #[cfg(feature = "po")]
 #[derive(AsApiError)]
-#[cfg_attr(feature = "po", po_directory = "locales/")]
+#[cfg_attr(all(feature = "json", feature = "po"), msg_path = "locales/")]
+#[cfg_attr(all(not(feature = "json"), feature = "po"), po_directory = "locales/")]
 pub enum ErrorEn {
     #[error(status = "BadRequest", msg_id = "invalid_password")]
     InvalidPassword,
