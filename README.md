@@ -3,10 +3,10 @@ This is a simple library to handle errors in a RESTful way.
 It uses a lightweight syntax to define errors and their codes.  
 
 ## Support 
-This crate uses the 'PO' translation method.  
-This means that the error messages are defined in a PO file for each language.
+This crate uses the 'PO' translation method, you can also defined the error messages in a json file.  
+This means if you are using the po method the error messages are defined in a PO file for each language.
   
-Because this crate is used in the INSAgenda project, the JSON format is defined with the following fields:
+Because this crate is used in the INSAgenda project, the JSON format of the response is defined with the following fields:
 ```json
 {
   "kind": "invalid_request",
