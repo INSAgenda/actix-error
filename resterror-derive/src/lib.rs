@@ -1,5 +1,5 @@
 use darling::FromVariant;
-use std::path::PathBuf;
+use std::{path::PathBuf, collections::HashMap};
 
 use syn::{parse_macro_input, DeriveInput};
 
@@ -93,7 +93,6 @@ pub fn derive(input: TokenStream) -> TokenStream {
 
     #[cfg(all(feature = "po", not(feature = "json")))]
     let messages_catalog = get_po_error_messages(po_directory);
-
 
     #[cfg(not(any(feature = "json", feature = "po")))]
     let messages_catalog: HashMap<String, HashMap<String, String>> = HashMap::new();
