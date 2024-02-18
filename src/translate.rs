@@ -1,17 +1,11 @@
 use std::collections::HashMap;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Translation {
     messages: HashMap<String, String>,
 }
 
 impl Translation {
-    pub fn new() -> Self {
-        Self {
-            messages: HashMap::new(),
-        }
-    }
-
     pub fn from_hashmap(messages: HashMap<String, String>) -> Self {
         Self { messages }
     }
@@ -32,13 +26,6 @@ impl Translation {
     }
 }
 
-#[deprecated]
-#[macro_export]
-macro_rules! trad {
-    ($($k:expr => $v:expr),* $(,)?) => {{
-        Translation::from_hashmap(core::convert::From::from([$(($k.to_string(), $v.to_string()),)*]))
-    }};
-}
 
 #[macro_export]
 macro_rules! tr {
@@ -47,4 +34,3 @@ macro_rules! tr {
     }};
 }
 pub use tr;
-pub use trad;

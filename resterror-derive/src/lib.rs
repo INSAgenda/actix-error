@@ -269,5 +269,3 @@ pub fn derive(input: TokenStream) -> TokenStream {
 
     code.parse().expect("Couldn't parse the code")
 }
-
-

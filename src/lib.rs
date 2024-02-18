@@ -8,25 +8,17 @@ pub mod translate;
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiError {
     pub kind: String,
-    #[serde(skip_serializing)]
     pub code: u16,
-    #[serde(skip_serializing)]
     pub messages: HashMap<String, String>,
-    message_fr: String,
-    message_en: String,
     origin: String,
 }
 
 impl ApiError {
     pub fn new(code: u16, kind: &str, messages: HashMap<String, String>) -> Self {
-        let message_en = messages.get("en").unwrap_or(&String::new()).to_string();
-        let message_fr = messages.get("fr").unwrap_or(&String::new()).to_string();
         Self {
             kind: kind.to_string(),
             code,
             messages,
-            message_fr,
-            message_en,
             origin: String::new(),
         }
     }
