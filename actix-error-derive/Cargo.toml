@@ -3,7 +3,7 @@ name = "actix-error-derive"
 authors = ["Dimitri Timoz <dimitri.timoz@protonmail.com>, INSAgenda <devs@insagenda.fr>"]
 repository = "https://github.com/INSAgenda/resterror"
 description = "A simple library to handle REST errors, with a derive macro to generate the error type. It also provides a compatibility layer with actix-web."
-version = "0.1.3"
+version = "0.2.0"
 edition = "2021"
 readme = "../README.md"
 license = "MIT"
@@ -13,18 +13,12 @@ categories = ["actix", "rest", "api", "web-programming", "error"]
 [lib]
 proc-macro = true
 
-[features]
-actix = ["actix-web"]
-po = ["poreader"]
-verbose = []
-json = [ "serde", "serde_json"]
-
 [dependencies]
 darling = "0.20"
 proc-macro2 = { version = "1.0" }
 syn = { version = "2.0", features = ["full"] }
-actix-web = { version = "4.2", optional = true }
+actix-web = { version = "4.2" }
 convert_case = "0.6"
-poreader = { version = "1.1", optional = true}
-serde = { version = "1.0", optional = true }
-serde_json = { version = "1.0", optional = true }
+serde = { version = "1.0" }
+
+[features]
