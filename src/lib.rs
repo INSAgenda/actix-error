@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use actix_web::http::StatusCode;
 
-pub use resterror_derive::AsApiError;
+pub use actix_error_derive::AsApiError;
 use serde::Serialize;
 
 pub mod translate;
