@@ -11,17 +11,11 @@ categories = ["actix", "rest", "api", "web-programming", "error"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-actix = ["actix-error-derive/actix"]
-po = ["actix-error-derive/po"]
 verbose = ["actix-error-derive/verbose"]
-json = ["actix-error-derive/json"]
-
-all = [ "po", "verbose", "json"]
+all = [ "verbose" ]
 
 [dependencies]
 proc-macro2 = { version = "1.0" }
 actix-web = "4.2" 
-poreader = { version = "1.1", optional = true}
-actix-error-derive = { version = "0.1.0", path = "actix-error-derive" }
+actix-error-derive = { path = "actix-error-derive" }
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
