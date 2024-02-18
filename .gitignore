@@ -1,5 +1,2 @@
-/target
-Cargo.lock
-resterror/Cargo.lock
-resterror-derive/target/
+target/
 launch.json

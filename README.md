@@ -16,7 +16,7 @@ This crate uses the 'PO' translation method and also allows you to define error 
 You can for example define an error for actix: 
 ### Define errors
 ```rust
-    #[derive(resterror::AsApiError, Debug, Clone)]
+    #[derive(actix_error::AsApiError, Debug, Clone)]
     #[po_directory = "locales/"]
     pub enum Error {
         /// Invalid request
