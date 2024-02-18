@@ -5,6 +5,7 @@ pub use actix_error_derive::AsApiError;
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiError {
     pub kind: String,
+    #[serde(skip_serializing)]
     pub code: u16,
     pub message: String,
 }

@@ -12,7 +12,7 @@ pub enum Error {
     InvalidPassword,
     #[error(code = 404, msg = "invalid id {}")]
     InvalidId(u32),
-    #[error(status = "BadRequest", msg = "invalid name {name} and age {age")]
+    #[error(status = "BadRequest", msg = "invalid name {name} and age {age}")]
     InfoError { name: String, age: u32 },
 }
 
@@ -35,7 +35,8 @@ GET /jo/17
 
 ```json
 {
-    "status": "BadRequest",
-    "msg": "invalid name jo and age 17"
+    "kind": "infor_error",
+    "message": "invalid name jo and age 17",
+    
 }
 ```
