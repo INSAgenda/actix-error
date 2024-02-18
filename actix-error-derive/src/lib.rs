@@ -15,12 +15,9 @@ struct Opts {
 
 /// This derive macro is used to convert an enum into an ApiError.  
 /// You can use it by adding the ```#[derive(AsApiError)]``` attribute to your enum.  
-/// You have to specify the error messages in a json file or in a po directory.  
-/// The path to the json file or the po directory is specified by adding the ```#[json_file = "path/to/messages.json"]``` or ```#[po_directory = "path/to/po"]``` attribute to the enum.  
-/// By default, the message id is the name of the variant in ```snake case```.  
-/// You can change the message id by adding the ```#[error(msg_id = "your_message_id")]``` attribute to the variant.  
+/// By default, the kind is ```snake case```.  
+/// ```#[error(kind = "your_message_id")]``` attribute to the variant.  
 /// You can also add a custom code to the error by adding the ```#[error(code = 400)]``` attribute to the variant.  
-/// You can also add a status to the error by adding the ```#[error(status = "your_status")]``` attribute to the variant.  
 /// The following status are available and return the corresponding status code: 
 /// ``` rust
 /// match error_kind {
