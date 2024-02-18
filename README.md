@@ -1,21 +1,9 @@
-# Resterror
+# actix-error
 This is a simple library to handle errors in a RESTful way. It uses a lightweight syntax to define errors and their codes.
   
 ## Support 
 This crate uses the 'PO' translation method and also allows you to define error messages in a JSON file. This means that if you use the PO method, the error messages are defined in a PO file for each language.
-  
-Because this crate is used in the INSAgenda project, the JSON format of the response is defined with the following fields:
-
-```json
-{
-  "kind": "invalid_request",
-  "messages_fr": "Requête invalide",
-  "messages_en": "Invalid request",
-  "origin": ""
-}
-```
-In the future, this crate will be more generic and will be in the following format:
-```json
+  ```json
 {
   "kind": "invalid_request",
   "messages": {
@@ -100,10 +88,9 @@ For example, you can use the error in an actix route like this:
 This error will be translated to the following JSON:
 ```json
 {
-  "kind": "invalid_request",
-  "messages_fr": "Requête invalide",
-  "messages_en": "Invalid request",
-  "origin": ""
+    "kind": "invalid_request",
+    "message": "Invalid request",
+    "origin": ""
 }
 ```
 With the following PO file:

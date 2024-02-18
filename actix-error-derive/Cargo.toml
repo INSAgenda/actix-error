@@ -1,5 +1,5 @@
 [package]
-name = "resterror-derive"
+name = "actix-error-derive"
 authors = ["Dimitri Timoz <dimitri.timoz@protonmail.com>, INSAgenda <devs@insagenda.fr>"]
 repository = "https://github.com/INSAgenda/resterror"
 description = "A simple library to handle REST errors, with a derive macro to generate the error type. It also provides a compatibility layer with actix-web."
@@ -20,9 +20,9 @@ verbose = []
 json = [ "serde", "serde_json"]
 
 [dependencies]
-darling = "0.14"
+darling = "0.20"
 proc-macro2 = { version = "1.0" }
-syn = { version = "1.0", features = ["full"] }
+syn = { version = "2.0", features = ["full"] }
 actix-web = { version = "4.2", optional = true }
 convert_case = "0.6"
 poreader = { version = "1.1", optional = true}

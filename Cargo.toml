@@ -1,5 +1,5 @@
 [package]
-name = "resterror"
+name = "actix-error"
 authors = ["Dimitri Timoz <dimitri.timoz@protonmail.com>, INSAgenda <devs@insagenda.fr>"]
 repository = "https://github.com/INSAgenda/resterror"
 description = "A simple library to handle REST errors, with a derive macro to generate the error type. It also provides a compatibility layer with actix-web."
@@ -11,17 +11,17 @@ categories = ["actix", "rest", "api", "web-programming", "error"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-actix = ["actix-web", "resterror-derive/actix"]
-po = ["resterror-derive/po"]
-verbose = ["resterror-derive/verbose"]
-json = ["resterror-derive/json"]
+actix = ["actix-error-derive/actix"]
+po = ["actix-error-derive/po"]
+verbose = ["actix-error-derive/verbose"]
+json = ["actix-error-derive/json"]
 
-all = ["actix", "po", "verbose", "json"]
+all = [ "po", "verbose", "json"]
 
 [dependencies]
 proc-macro2 = { version = "1.0" }
-actix-web = { version = "4.2", optional = true }
+actix-web = "4.2" 
 poreader = { version = "1.1", optional = true}
-resterror-derive = { version = "0.1.0", path = "resterror-derive" }
+actix-error-derive = { version = "0.1.0", path = "actix-error-derive" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

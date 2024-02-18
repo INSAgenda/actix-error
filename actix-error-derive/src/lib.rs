@@ -6,7 +6,6 @@ use syn::{parse_macro_input, DeriveInput};
 use proc_macro2::TokenTree;
 use proc_macro::TokenStream;
 
-
 #[cfg(feature = "json")]
 mod json;
 #[cfg(feature = "json")]
@@ -269,5 +268,3 @@ pub fn derive(input: TokenStream) -> TokenStream {
 
     code.parse().expect("Couldn't parse the code")
 }
-
-

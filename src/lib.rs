@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use actix_web::http::StatusCode;
 
 pub use resterror_derive::AsApiError;
 use serde::Serialize;
@@ -44,10 +45,6 @@ impl std::fmt::Display for ApiError {
 #[cfg(feature = "po")]
 use translate::Translation;
 
-#[cfg(feature = "actix")]
-use actix_web::http::StatusCode;
-
-#[cfg(feature = "actix")]
 impl actix_web::ResponseError for ApiError {
     fn status_code(&self) -> StatusCode {
         StatusCode::from_u16(self.code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR)
