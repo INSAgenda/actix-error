@@ -11,8 +11,6 @@ categories = ["actix", "rest", "api", "web-programming", "error"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-verbose = ["actix-error-derive/verbose"]
-all = [ "verbose" ]
 
 [dependencies]
 proc-macro2 = { version = "1.0" }

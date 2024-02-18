@@ -187,8 +187,5 @@ pub fn derive(input: TokenStream) -> TokenStream {
     code.push_str("   }\n");
     code.push_str("}\n");
 
-    
-    println!("code : {code}");
-
     code.parse().expect("Couldn't parse the code")
 }
