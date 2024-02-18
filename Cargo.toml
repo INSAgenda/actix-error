@@ -15,5 +15,5 @@ categories = ["actix", "rest", "api", "web-programming", "error"]
 [dependencies]
 proc-macro2 = { version = "1.0" }
 actix-web = "4.2" 
-actix-error-derive = { path = "actix-error-derive" }
+actix-error-derive = { version = "0.2.0", path = "actix-error-derive" }
 serde = { version = "1.0", features = ["derive"] }
