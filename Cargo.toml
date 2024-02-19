@@ -14,7 +14,7 @@ categories = ["actix", "rest", "api", "web-programming", "error"]
 
 [dependencies]
 actix-web = "4.2" 
-actix-error-derive = { version = "0.2.0", path = "actix-error-derive" }
+actix-error-derive = { version = "0.2.2", path = "actix-error-derive" }
 serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
