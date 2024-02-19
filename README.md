@@ -14,6 +14,8 @@ pub enum Error {
     InvalidId(u32),
     #[error(status = "BadRequest", msg = "invalid name {name} and age {age}")]
     InfoError { name: String, age: u32 },
+    #[error(status = "BadRequest", msg = "Internal database error", ignore)]
+    PostgresError(PgError),
 }
 
 

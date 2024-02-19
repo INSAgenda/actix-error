@@ -10,6 +10,7 @@ struct Opts {
     status: Option<String>,
     kind: Option<String>,
     msg: Option<String>,
+    ignore: bool,
 }
 
 
@@ -144,8 +145,12 @@ pub fn derive(input: TokenStream) -> TokenStream {
             } else if let Some(_) = struc {
                 format!("format!(\"{}\")", msg)
             } else {
-                "String::new()".to_string()
+                format!("\"{}\".to_owned()", msg)
             };
+
+            if opts.ignore {
+                message = format!("\"{}\".to_owned()", msg);
+            }
         }
 
         let mut list_vars = String::new();
@@ -184,5 +189,29 @@ pub fn derive(input: TokenStream) -> TokenStream {
     code.push_str("   }\n");
     code.push_str("}\n");
 
+    code.push_str(&format!(r#"
+        use actix_web::http::StatusCode;
+        use std::fmt::{{Display, Formatter, Debug}};
+
+        impl Debug for {ident_name} {{
+            fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {{ write!(f, "{{:?}}", self.as_api_error()) }}
+        }}
+    
+        impl Display for {ident_name} {{
+            fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {{ write!(f, "{{:?}}", self.as_api_error()) }}
+        }}
+    
+        impl actix_web::ResponseError for {ident_name} {{
+            fn status_code(&self) -> StatusCode {{
+                let api_error = self.as_api_error();
+                StatusCode::from_u16(api_error.code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR)
+            }}
+        
+            fn error_response(&self) -> actix_web::HttpResponse {{
+                let api_error = self.as_api_error();
+                actix_web::HttpResponse::build(self.status_code()).json(api_error)
+            }}
+        }}
+    "#));
     code.parse().expect("Couldn't parse the code")
 }

@@ -8,6 +8,8 @@ pub enum ErrorEn {
     InvalidId(u32),
     #[error(code = 500, msg = "invalid name {name} and age {age}")]
     NamedError { name: String, age: u32 },
+    #[error(status = "InternalServerError", msg = "Internal database error", ignore)]
+    PostgresError(String),
 }
 
 #[actix_web::test]
@@ -16,7 +18,7 @@ async fn test_error() {
     let api_error = error.as_api_error();
     assert_eq!(api_error.code, 400);
     assert_eq!(api_error.kind, "invalid_password");
-    assert_eq!(api_error.message, "");
+    assert_eq!(api_error.message, "invalid_password");
 
     let error = ErrorEn::InvalidId(100);
     let api_error = error.as_api_error();
@@ -32,4 +34,10 @@ async fn test_error() {
     assert_eq!(api_error.code, 500);
     assert_eq!(api_error.kind, "named_error");
     assert_eq!(api_error.message, "invalid name test and age 100");
+
+    let error = ErrorEn::PostgresError("test".to_string());
+    let api_error = error.as_api_error();
+    assert_eq!(api_error.code, 500);
+    assert_eq!(api_error.kind, "postgres_error");
+    assert_eq!(api_error.message, "Internal database error");
 }
