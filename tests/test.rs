@@ -16,7 +16,7 @@ async fn test_error() {
     let api_error = error.as_api_error();
     assert_eq!(api_error.code, 400);
     assert_eq!(api_error.kind, "invalid_password");
-    assert_eq!(api_error.message, "");
+    assert_eq!(api_error.message, "invalid_password");
 
     let error = ErrorEn::InvalidId(100);
     let api_error = error.as_api_error();

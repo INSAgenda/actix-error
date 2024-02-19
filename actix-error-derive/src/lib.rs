@@ -10,6 +10,7 @@ struct Opts {
     status: Option<String>,
     kind: Option<String>,
     msg: Option<String>,
+    ignore: bool,
 }
 
 
@@ -144,8 +145,12 @@ pub fn derive(input: TokenStream) -> TokenStream {
             } else if let Some(_) = struc {
                 format!("format!(\"{}\")", msg)
             } else {
-                "String::new()".to_string()
+                format!("\"{}\".to_owned()", msg)
             };
+
+            if opts.ignore {
+                message = format!("\"{}\".to_owned()", msg);
+            }
         }
 
         let mut list_vars = String::new();
