@@ -194,11 +194,11 @@ pub fn derive(input: TokenStream) -> TokenStream {
         use std::fmt::{{Display, Formatter, Debug}};
 
         impl Debug for {ident_name} {{
-            fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {{ write!(f, "{{:?}}", self.as_api_error()) }}
+            fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {{ write!(f, "{{:?}}", self) }}
         }}
     
         impl Display for {ident_name} {{
-            fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {{ write!(f, "{{:?}}", self.as_api_error()) }}
+            fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {{ write!(f, "{{:?}}", self) }}
         }}
     
         impl actix_web::ResponseError for {ident_name} {{
