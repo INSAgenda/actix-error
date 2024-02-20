@@ -37,7 +37,7 @@ GET /jo/17
 
 ```json
 {
-    "kind": "infor_error",
+    "kind": "info_error",
     "message": "invalid name jo and age 17",
     
 }
