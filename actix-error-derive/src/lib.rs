@@ -213,6 +213,5 @@ pub fn derive(input: TokenStream) -> TokenStream {
             }}
         }}
     "#));
-    println!("{}", code);
     code.parse().expect("Couldn't parse the code")
 }
