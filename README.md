@@ -29,7 +29,7 @@ pub enum ErrorEn {
 }
 
 #[get("/{name}/{age}")]
-async fn get_info(req: HttpRequest) -> Result<HttpResponse> {
+async fn get_info(req: HttpRequest) -> Result<HttpResponse, ErrorEn> {
     let name = req.match_info().get("name").unwrap();
     let age: u32 = req.match_info().get("age").unwrap().parse().unwrap();
     
