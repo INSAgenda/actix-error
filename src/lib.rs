@@ -1,4 +1,6 @@
-use actix_web::http::StatusCode;
+pub use actix_web::http::StatusCode;
+pub use std::fmt::{{Display, Formatter, Debug}};
+
 use serde::Serialize;
 pub use actix_error_derive::AsApiError;
 
@@ -39,3 +41,4 @@ impl actix_web::ResponseError for ApiError {
         actix_web::HttpResponse::build(self.status_code()).json(self)
     }
 }
+

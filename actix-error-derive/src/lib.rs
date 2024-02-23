@@ -11,6 +11,7 @@ struct Opts {
     kind: Option<String>,
     msg: Option<String>,
     ignore: bool,
+    group: bool,
 }
 
 
@@ -80,6 +81,8 @@ pub fn derive(input: TokenStream) -> TokenStream {
         } else {
             String::new()
         };
+
+        
         // Get the tuple if it exists
         let tuple = match &v.fields {
             syn::Fields::Unnamed(u) => Some(u),
@@ -164,21 +167,21 @@ pub fn derive(input: TokenStream) -> TokenStream {
             }
         }
 
+        let api_error = if opts.group {
+            String::from("a0.as_api_error()")
+        } else {
+            format!("ApiError::new({code}, \"{kind}\", {message})", code = code, kind = kind, message = message)
+        };
         
         format!("
             {ident_name}::{ident} {matching_wrapped} {list_vars} => {{
-                ApiError::new(
-                    {code}, 
-                    \"{kind}\",
-                    {message}
-                )
+                {api_error}
             }},
         ", )
     });
 
     // Implement the ApiError trait
     let mut code = String::new();
-    code.push_str("use actix_error::{AsApiErrorTrait, ApiError};\n");
     code.push_str(&format!("impl AsApiErrorTrait for {ident_name} {{\n"));
     code.push_str(" fn as_api_error(&self) -> ApiError {\n");
     code.push_str("     match &self {\n");
@@ -190,9 +193,6 @@ pub fn derive(input: TokenStream) -> TokenStream {
     code.push_str("}\n");
 
     code.push_str(&format!(r#"
-        use actix_web::http::StatusCode;
-        use std::fmt::{{Display, Formatter, Debug}};
-
         impl Debug for {ident_name} {{
             fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {{ write!(f, "{{:?}}", self) }}
         }}

@@ -4,23 +4,32 @@ This is a simple library to handle errors in a RESTful way. It uses a lightweigh
 ## Usage
 Example of usage in a endpoint:
 ```rust
-use actix_error::AsApiError;
+use actix_error::*;
 
 #[derive(AsApiError)]
-pub enum Error {
-    #[error(status = "BadRequest", msg = "invalid_password")]
+pub enum GrpError {
+    #[error(status = "InternalServerError", msg = "Firewall fail")]
+    FirewallFail,
+    #[error(status = "BadRequest", msg = "Invalid token")]
+    InvalidToken,
+}
+
+#[derive(AsApiError)]
+pub enum ErrorEn {
+    #[error(status = "BadRequest", msg = "Invalid password")]
     InvalidPassword,
     #[error(code = 404, msg = "invalid id {}")]
     InvalidId(u32),
-    #[error(status = "BadRequest", msg = "invalid name {name} and age {age}")]
-    InfoError { name: String, age: u32 },
-    #[error(status = "BadRequest", msg = "Internal database error", ignore)]
-    PostgresError(PgError),
+    #[error(code = 500, msg = "invalid name {name} and age {age}")]
+    NamedError { name: String, age: u32 },
+    #[error(status = "InternalServerError", msg = "Internal database error", ignore)]
+    PostgresError(String),
+    #[error(group)]
+    GroupError(GrpError),
 }
 
-
 #[get("/{name}/{age}")]
-async fn get_info(req: HttpRequest) -> Result<HttpResponse> {
+async fn get_info(req: HttpRequest) -> Result<HttpResponse, ErrorEn> {
     let name = req.match_info().get("name").unwrap();
     let age: u32 = req.match_info().get("age").unwrap().parse().unwrap();
     
