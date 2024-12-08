@@ -13,7 +13,7 @@ The `derive(AsApiError)` library provides a powerful, derive macro for Rust deve
 ## Installation
 ```toml
 [dependencies]
-actix-error = "0.2.5"
+actix-error = "0.2.6"
 ```
 
 ## Usage
