@@ -193,18 +193,24 @@ pub fn derive(input: TokenStream) -> TokenStream {
     code.push_str("}\n");
 
     code.push_str(&format!(r#"
-        impl Debug for {ident_name} {{
-            fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {{ write!(f, "{{:?}}", self) }}
+        impl std::fmt::Debug for {ident_name} {{
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
+                let api_error = self.as_api_error();
+                write!(f, "{{:?}}", api_error)
+            }}
         }}
     
-        impl Display for {ident_name} {{
-            fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {{ write!(f, "{{:?}}", self) }}
+        impl std::fmt::Display for {ident_name} {{
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
+                let api_error = self.as_api_error();
+                write!(f, "{{}}", api_error)
+            }}
         }}
     
         impl actix_web::ResponseError for {ident_name} {{
-            fn status_code(&self) -> StatusCode {{
+            fn status_code(&self) -> actix_web::http::StatusCode {{
                 let api_error = self.as_api_error();
-                StatusCode::from_u16(api_error.code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR)
+                actix_web::http::StatusCode::from_u16(api_error.code).unwrap_or(actix_web::http::StatusCode::INTERNAL_SERVER_ERROR)
             }}
         
             fn error_response(&self) -> actix_web::HttpResponse {{
