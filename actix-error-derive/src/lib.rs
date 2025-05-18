@@ -141,9 +141,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
                     let field_vars = f.unnamed.iter().enumerate().map(|(i, _)| format_ident!("a{}", i));
                     quote! { format!(#msg_s, #( #field_vars ),*) }
                 } else if let syn::Fields::Named(_) = &v.fields {
-                    // For struct variants, msg is a format string, but no fields are interpolated by default by the macro
-                    // If specific field interpolation is needed for named fields, it would require a more complex parsing of msg_s
-                    // or a different attribute syntax.
+                    // For struct variants, msg is a format string. Fields are interpolated from local scope.
                     quote! { format!(#msg_s) } 
                 } else { // Unit variants
                     quote! { #msg_s.to_owned() }
@@ -152,13 +150,39 @@ pub fn derive(input: TokenStream) -> TokenStream {
             None => quote! { String::new() }, // Default empty message
         };
         
+        let mut details_expr = quote! { None };
+
+        if !opts.group {
+            // Check if the variant has exactly one unnamed field
+            if let syn::Fields::Unnamed(fields_unnamed) = &v.fields {
+                if fields_unnamed.unnamed.len() == 1 {
+                    let first_field = fields_unnamed.unnamed.first().unwrap();
+                    // Get the type of the first field
+                    let field_ty = &first_field.ty;
+                    // Convert the type to a string for comparison
+                    let type_string = quote!(#field_ty).to_string();
+                    
+                    let field_ident = format_ident!("a0"); // Identifier for the first unnamed field
+
+                    // Check if the type is serde_json::Value
+                    if type_string == "serde_json :: Value" {
+                        details_expr = quote! { Some(#field_ident.clone()) };
+                    }
+                    // Check if the type is Option<serde_json::Value>
+                    else if type_string == "Option < serde_json :: Value >" || type_string == "std :: option :: Option < serde_json :: Value >" {
+                        details_expr = quote! { #field_ident.clone() };
+                    }
+                }
+            }
+        }
+        
         // Generate the ApiError construction call
         let api_error_call = if opts.group {
             // Assumes the first field of a tuple variant is 'a0' if 'group' is true
             let group_var = format_ident!("a0"); 
             quote! { #group_var.as_api_error() }
         } else {
-            quote! { ApiError::new(#status_code_val, #kind_str, #message_expr, None) } // Pass None for the details argument
+            quote! { ApiError::new(#status_code_val, #kind_str, #message_expr, #details_expr) } 
         };
 
         Ok(quote! {
