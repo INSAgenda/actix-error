@@ -21,7 +21,7 @@ dependencies = [
 
 [[package]]
 name = "actix-error-derive"
-version = "0.2.8"
+version = "0.2.9"
 dependencies = [
  "actix-web",
  "convert_case",
@@ -29,6 +29,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "serde",
+ "serde_json",
  "syn",
 ]
 
