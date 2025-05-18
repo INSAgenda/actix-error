@@ -158,7 +158,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
             let group_var = format_ident!("a0"); 
             quote! { #group_var.as_api_error() }
         } else {
-            quote! { ApiError::new(#status_code_val, #kind_str, #message_expr) }
+            quote! { ApiError::new(#status_code_val, #kind_str, #message_expr, None) } // Pass None for the details argument
         };
 
         Ok(quote! {

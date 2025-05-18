@@ -10,9 +10,12 @@ pub struct ApiError {
     pub kind: String,
     /// The HTTP status code associated with this error. This field is not serialized.
     #[serde(skip_serializing)]
-    pub code: u16, // Changed from StatusCode to u16
+    pub code: u16,
     /// A human-readable message describing the error.
     pub message: String,
+    /// Optional structured details about the error.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub details: Option<serde_json::Value>,
 }
 
 impl ApiError {
@@ -23,11 +26,18 @@ impl ApiError {
     /// * `code` - The HTTP status code for this error.
     /// * `kind` - A string slice representing the kind or category of the error.
     /// * `message` - A `String` containing the descriptive message for the error.
-    pub fn new(code: u16, kind: &str, message: String) -> Self { // Changed code to u16
+    /// * `details` - Optional `serde_json::Value` for structured error details.
+    pub fn new(
+        code: u16,
+        kind: &str,
+        message: String,
+        details: Option<serde_json::Value>,
+    ) -> Self {
         Self {
             kind: kind.to_string(),
             message,
             code,
+            details,
         }
     }
 }
