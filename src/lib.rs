@@ -47,7 +47,7 @@ impl Display for ApiError {
 impl Error for ApiError {}
 
 impl actix_web::ResponseError for ApiError {
-    fn status_code(&self) -> actix_web::http::StatusCode { // Use fully qualified path
+    fn status_code(&self) -> actix_web::http::StatusCode {
         actix_web::http::StatusCode::from_u16(self.code)
             .unwrap_or(actix_web::http::StatusCode::INTERNAL_SERVER_ERROR)
     }
