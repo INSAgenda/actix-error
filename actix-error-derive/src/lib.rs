@@ -22,25 +22,33 @@ struct Opts {
 /// You can also add a custom code to the error by adding the ```#[error(code = 400)]``` attribute to the variant.  
 /// The following status are available and return the corresponding status code: 
 /// ``` rust
-/// match error_kind {
-///     "BadRequest" => 400,
-///     "Unauthorized" => 401,
-///     "Forbidden" => 403,
-///     "NotFound" => 404,
-///     "MethodNotAllowed" => 405,
-///     "Conflict" => 409,
-///     "Gone" => 410,
-///     "PayloadTooLarge" => 413,
-///     "UnsupportedMediaType" => 415,
-///     "UnprocessableEntity" => 422,
-///     "TooManyRequests" => 429,
-///     "InternalServerError" => 500,
-///     "NotImplemented" => 501,
-///     "BadGateway" => 502,
-///     "ServiceUnavailable" => 503,
-///     "GatewayTimeout" => 504,
-///     _ => unreachable!(),
+/// fn get_status_code(error_kind: &str) -> u16 {
+///     match error_kind {
+///         "BadRequest" => 400,
+///         "Unauthorized" => 401,
+///         "Forbidden" => 403,
+///         "NotFound" => 404,
+///         "MethodNotAllowed" => 405,
+///         "Conflict" => 409,
+///         "Gone" => 410,
+///         "PayloadTooLarge" => 413,
+///         "UnsupportedMediaType" => 415,
+///         "UnprocessableEntity" => 422,
+///         "TooManyRequests" => 429,
+///         "InternalServerError" => 500,
+///         "NotImplemented" => 501,
+///         "BadGateway" => 502,
+///         "ServiceUnavailable" => 503,
+///         "GatewayTimeout" => 504,
+///         _ => 0, // Or some other default/error handling
+///     }
 /// }
+///
+/// // Example usage:
+/// let code = get_status_code("NotFound");
+/// assert_eq!(code, 404);
+/// let default_code = get_status_code("SomeOtherError");
+/// assert_eq!(default_code, 0);
 /// ```
 #[proc_macro_derive(AsApiError, attributes(error))]
 pub fn derive(input: TokenStream) -> TokenStream {
@@ -156,16 +164,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
             }
         }
 
-        let mut list_vars = String::new();
-        
-        // Add the tuple syntax if it exists
-        if list_vars.len() > 0 {
-            if struc.is_some() {
-                list_vars = format!("{{ {} }}", list_vars);
-            } else {
-                list_vars = format!("( {} )", list_vars);
-            }
-        }
+        // The list_vars variable and its associated logic can be removed because list_vars is never populated.
 
         let api_error = if opts.group {
             String::from("a0.as_api_error()")
@@ -174,7 +173,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
         };
         
         format!("
-            {ident_name}::{ident} {matching_wrapped} {list_vars} => {{
+            {ident_name}::{ident} {matching_wrapped} => {{ 
                 {api_error}
             }},
         ", )
@@ -215,7 +214,8 @@ pub fn derive(input: TokenStream) -> TokenStream {
         
             fn error_response(&self) -> actix_web::HttpResponse {{
                 let api_error = self.as_api_error();
-                actix_web::HttpResponse::build(self.status_code()).json(api_error)
+                let status = actix_web::http::StatusCode::from_u16(api_error.code).unwrap_or(actix_web::http::StatusCode::INTERNAL_SERVER_ERROR);
+                actix_web::HttpResponse::build(status).json(api_error)
             }}
         }}
     "#));
